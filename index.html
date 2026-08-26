@@ -121,6 +121,9 @@ h1{font-family:'Noto Serif KR',serif;font-size:clamp(26px,4.2vw,36px);font-weigh
 .section{margin-top:34px}
 .section>h2{font-family:'Noto Serif KR',serif;font-size:21px;font-weight:700;color:var(--navy);
   margin-bottom:6px}
+.section>h2.sectoggle{cursor:pointer;display:flex;align-items:center;gap:9px;user-select:none}
+.sectoggle .chev{font-size:15px;color:var(--sub);font-family:'Noto Sans KR',sans-serif}
+.sectoggle:hover .chev{color:var(--pine)}
 .section>.sub{font-size:13.5px;color:var(--sub);margin-bottom:16px}
 .tl{list-style:none;position:relative;padding-left:34px}
 .tl::before{content:"";position:absolute;left:12px;top:8px;bottom:8px;width:2px;background:var(--line)}
@@ -346,7 +349,10 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 
 <!-- 장학금 진단 -->
 <section class="section">
-  <h2 id="tSchTitle"></h2>
+  <h2 class="sectoggle" role="button" tabindex="0" aria-controls="schBody"
+      onclick="toggleSchSec()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSchSec();}">
+    <span id="tSchTitle"></span><span class="chev" id="schChev">▾</span></h2>
+  <div id="schBody">
   <p class="sub" id="tSchSub"></p>
   <div class="card">
     <!-- 대학원용 조건 -->
@@ -396,6 +402,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
     </div>
     <div class="schgroups" id="schGroups" style="margin-top:16px"></div>
   </div>
+  </div><!-- /schBody -->
 </section>
 
 <section class="section">
@@ -1350,6 +1357,20 @@ function renderSch(){
   }
   attachSchToggles();
 }
+/* 장학금 진단 섹션 전체 접기/펼치기 */
+let schSecOpen=true;
+try{schSecOpen = localStorage.getItem('wood_diag_schsec')!=='0';}catch(e){}
+function applySchSec(){
+  $('schBody').style.display = schSecOpen?'':'none';
+  $('schChev').textContent = schSecOpen?'▾':'▸';
+  const h=$('schChev').parentElement;
+  if(h) h.setAttribute('aria-expanded', schSecOpen?'true':'false');
+}
+function toggleSchSec(){
+  schSecOpen=!schSecOpen; applySchSec();
+  try{localStorage.setItem('wood_diag_schsec', schSecOpen?'1':'0');}catch(e){}
+}
+
 const schOpen={};   /* 그룹별 접힘 상태 (세션 내 유지) */
 function grp(title,cards,note){
   const k=title.ko;
@@ -1385,7 +1406,7 @@ restore();
   $('aBExam').style.display = prog==='L'?'':'none';
   tab = (prog==='B'||prog==='L')?'B':(prog==='D'?'D':'M');
 })();
-applyLang(); buildCourses(); renderRegs(); renderLinks(); render();
+applyLang(); applySchSec(); buildCourses(); renderRegs(); renderLinks(); render();
 </script>
 </body>
 </html>
