@@ -350,7 +350,7 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 <!-- 장학금 진단 -->
 <section class="section">
   <h2 class="sectoggle" role="button" tabindex="0" aria-controls="schBody"
-      onclick="toggleSchSec()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSchSec();}">
+      onclick="toggleSec('sch')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSec('sch');}">
     <span id="tSchTitle"></span><span class="chev" id="schChev">▾</span></h2>
   <div id="schBody">
   <p class="sub" id="tSchSub"></p>
@@ -406,13 +406,20 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 </section>
 
 <section class="section">
-  <h2 id="tTlTitle"></h2>
+  <h2 class="sectoggle" role="button" tabindex="0" aria-controls="tlBody"
+      onclick="toggleSec('tl')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSec('tl');}">
+    <span id="tTlTitle"></span><span class="chev" id="tlChev">▾</span></h2>
+  <div id="tlBody">
   <p class="sub" id="tTlSub"></p>
   <ol class="tl" id="timeline"></ol>
+  </div>
 </section>
 
 <section class="section">
-  <h2 id="tCourseTitle"></h2>
+  <h2 class="sectoggle" role="button" tabindex="0" aria-controls="courseBody"
+      onclick="toggleSec('course')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSec('course');}">
+    <span id="tCourseTitle"></span><span class="chev" id="courseChev">▾</span></h2>
+  <div id="courseBody">
   <p class="sub" id="tCourseSub"></p>
   <div class="card">
     <div class="ctabs" id="ctabs"></div>
@@ -423,12 +430,17 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
       <button class="apply" id="tApply" onclick="applySum()"></button>
     </div>
   </div>
+  </div>
 </section>
 
 <section class="section">
-  <h2 id="tRegTitle"></h2>
+  <h2 class="sectoggle" role="button" tabindex="0" aria-controls="regsBody"
+      onclick="toggleSec('regs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSec('regs');}">
+    <span id="tRegTitle"></span><span class="chev" id="regsChev">▾</span></h2>
+  <div id="regsBody">
   <p class="sub" id="tRegSub"></p>
   <div id="regBox"></div>
+  </div>
 </section>
 
 <section class="section">
@@ -1357,18 +1369,22 @@ function renderSch(){
   }
   attachSchToggles();
 }
-/* 장학금 진단 섹션 전체 접기/펼치기 */
-let schSecOpen=true;
-try{schSecOpen = localStorage.getItem('wood_diag_schsec')!=='0';}catch(e){}
-function applySchSec(){
-  $('schBody').style.display = schSecOpen?'':'none';
-  $('schChev').textContent = schSecOpen?'▾':'▸';
-  const h=$('schChev').parentElement;
-  if(h) h.setAttribute('aria-expanded', schSecOpen?'true':'false');
-}
-function toggleSchSec(){
-  schSecOpen=!schSecOpen; applySchSec();
-  try{localStorage.setItem('wood_diag_schsec', schSecOpen?'1':'0');}catch(e){}
+/* 섹션 전체 접기/펼치기 (장학금·타임라인·교과목·규정) */
+const SECS={sch:['schBody','schChev'], tl:['tlBody','tlChev'],
+            course:['courseBody','courseChev'], regs:['regsBody','regsChev']};
+let secOpen={sch:true, tl:true, course:true, regs:true};
+try{const o=JSON.parse(localStorage.getItem('wood_diag_secs')||'{}');
+    Object.keys(SECS).forEach(k=>{if(o[k]===false) secOpen[k]=false;});}catch(e){}
+function applySecs(){
+  Object.entries(SECS).forEach(([k,[body,chev]])=>{
+    $(body).style.display = secOpen[k]?'':'none';
+    $(chev).textContent = secOpen[k]?'▾':'▸';
+    const h=$(chev).parentElement;
+    if(h) h.setAttribute('aria-expanded', secOpen[k]?'true':'false');
+  });}
+function toggleSec(k){
+  secOpen[k]=!secOpen[k]; applySecs();
+  try{localStorage.setItem('wood_diag_secs', JSON.stringify(secOpen));}catch(e){}
 }
 
 const schOpen={};   /* 그룹별 접힘 상태 (세션 내 유지) */
@@ -1406,7 +1422,7 @@ restore();
   $('aBExam').style.display = prog==='L'?'':'none';
   tab = (prog==='B'||prog==='L')?'B':(prog==='D'?'D':'M');
 })();
-applyLang(); applySchSec(); buildCourses(); renderRegs(); renderLinks(); render();
+applyLang(); applySecs(); buildCourses(); renderRegs(); renderLinks(); render();
 </script>
 </body>
 </html>
