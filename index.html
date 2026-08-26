@@ -62,10 +62,12 @@ h1{font-family:'Noto Serif KR',serif;font-size:clamp(26px,4.2vw,36px);font-weigh
 .card h2 .tag{font-size:11px;font-weight:700;color:var(--pine);background:var(--pine-soft);
               border-radius:99px;padding:2px 9px;letter-spacing:.05em}
 
-.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));border:1px solid var(--line);
-     border-radius:9px;overflow:hidden;margin-bottom:16px}
+.seg{display:grid;border:1px solid var(--line);
+     border-radius:9px;overflow:hidden;margin-bottom:8px}
+.seg.row2{grid-template-columns:1fr 1fr}
+.seg.row3{grid-template-columns:1fr 1fr 1fr;margin-bottom:16px}
 .seg button{padding:9px 2px;font-size:12.5px;font-weight:600;background:var(--surface);
-            color:var(--sub);border:none;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+            color:var(--sub);border:none;border-right:1px solid var(--line)}
 .seg button:last-child{border-right:none}
 .seg button.on{background:var(--pine);color:#fff}
 .field{margin-bottom:13px}
@@ -150,11 +152,24 @@ h1{font-family:'Noto Serif KR',serif;font-size:clamp(26px,4.2vw,36px);font-weigh
 .scorebar .lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--sub)}
 .scorebar .lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
 .gatewarn{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--need)}
-.schgroups{display:flex;flex-direction:column;gap:16px}
-.schgroup h3{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:8px;display:flex;gap:8px;align-items:center}
-.schgroup h3 .cnt{font-size:11px;font-weight:700;background:var(--chip);border-radius:99px;padding:1px 8px;color:var(--sub)}
+.schgroups{display:flex;flex-direction:column;gap:10px}
+details.schgroup{border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+details.schgroup summary{list-style:none;display:flex;gap:8px;align-items:center;cursor:pointer;
+  padding:10px 14px;font-size:14px;font-weight:800;color:var(--navy)}
+details.schgroup summary::-webkit-details-marker{display:none}
+details.schgroup summary::after{content:'▸';margin-left:auto;font-size:13px;color:var(--sub)}
+details.schgroup[open] summary::after{content:'▾'}
+details.schgroup .schcards{padding:0 12px 12px}
+.schgroup .cnt{font-size:11px;font-weight:700;background:var(--chip);border-radius:99px;padding:1px 8px;color:var(--sub)}
 .schcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:9px}
-.sch{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--surface);font-size:12.5px}
+.sch{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--surface);font-size:12.5px;
+     position:relative;display:block;color:inherit;text-decoration:none}
+a.sch:hover{border-color:var(--pine)}
+.sch .tip{display:none;position:absolute;left:8px;right:8px;bottom:calc(100% + 6px);z-index:9;
+  background:var(--ink);color:var(--paper);font-size:11.5px;line-height:1.55;font-weight:500;
+  padding:8px 11px;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,.25);pointer-events:none}
+.sch .tip b{color:inherit}
+.sch:hover .tip,.sch:focus-visible .tip{display:block}
 .sch .n{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sch .amt{color:var(--pine);font-weight:700;margin-top:2px}
 .sch .meta{color:var(--sub);margin-top:2px}
@@ -230,9 +245,11 @@ footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);
 <div class="grid">
   <div class="card">
     <h2><span id="tInput"></span> <span class="tag">INPUT</span></h2>
-    <div class="seg" role="tablist" aria-label="program">
+    <div class="seg row2" role="tablist" aria-label="undergraduate program">
       <button id="segB" onclick="setProg('B')"></button>
       <button id="segL" onclick="setProg('L')"></button>
+    </div>
+    <div class="seg row3" role="tablist" aria-label="graduate program">
       <button id="segM" class="on" onclick="setProg('M')"></button>
       <button id="segD" onclick="setProg('D')"></button>
       <button id="segC" onclick="setProg('C')"></button>
@@ -505,6 +522,8 @@ const S={
  bCouncil:{ko:'학생회 활동', en:'Student council member'},
  bFresh:{ko:'신입생(1학년)', en:'Freshman (1st year)'},
  scoreTitle:{ko:'학과 장학생 선발 평가점수', en:'Dept. scholarship evaluation score'},
+ scoreNote:{ko:'※ 학과활동·소모임·학생회는 개별 장학금의 신청 자격이 아니라 이 평가점수에 반영됩니다. 교내·재단 장학생은 학과가 이 점수 순위로 추천·선발하므로, 점수가 높을수록 유리합니다.',
+        en:'※ Dept. activities, study groups and student council feed into this score — they are not eligibility conditions for individual scholarships. The department nominates university/foundation scholarship recipients by this score ranking, so a higher score improves your chances.'},
  scoreGate:{ko:'⚠ 평점 2.0 미만은 장학평가 대상이 아닙니다', en:'⚠ GPA below 2.0 is not eligible for scholarship evaluation'},
  scGpa:{ko:'학점(50)', en:'GPA (50)'},
  scLang:{ko:'외국어(20)', en:'Language (20)'},
@@ -518,6 +537,7 @@ const S={
  grpBk:{ko:'BK21 참여 장학', en:'BK21 Scholarships'},
  grpAward:{ko:'우수 대학원생 시상', en:'Excellence Awards'},
  grpSup:{ko:'연구·교육 지원사업 (재학생·수료후등록생)', en:'Research & Education Support (enrolled & post-completion)'},
+ rankNote:{ko:'평가점수 순 선발', en:'Selected by score ranking'},
  pillOk:{ko:'✓ 신청 대상', en:'✓ Eligible'},
  pillNo:{ko:'대상 아님', en:'Not eligible'},
  pillInfo:{ko:'안내', en:'Info'},
@@ -530,8 +550,8 @@ const S={
  applyB:{ko:'이 값을 전공 학점에 적용', en:'Apply to major credits'},
  courseNoteG:{ko:'+ 공통 : 연구지도1·2, 연구연수1·2 (지도교수 연구지도 교과목) · 박사/통합과정은 석·박사 목록을 함께 체크할 수 있습니다.',
         en:'+ Common: Research Guidance 1·2, Research Training 1·2 (advisor-led). Doctoral/Integrated students may check both MS and PhD lists.'},
- courseNoteB:{ko:'2026 교과과정 기준 · 모든 개설 교과목을 체크할 수 있습니다. 구 안내문의 "기타 개설" 과목(식물·임산바이오테크놀러지, 임산공학자료작성법, 공학목재론, 임산공학과제)은 개설 학기가 확정되어 목록에 포함했고, 바이오에너지·펄프제지학은 2026 교과과정에 개설되지 않아 제외했습니다. ※ 동일교과목 : 목재물리학및실험 ↔ 목조건축재료환경실습 (2-1 전필)',
-        en:'Based on the 2026 curriculum — every offered course is checkable. Courses formerly listed as "also offered" (Plant & Forest-Products Biotechnology, Technical Writing, Engineered Wood, Capstone Project) now have fixed semesters and are included above; Bioenergy and Pulp & Paper Science are not offered in the 2026 curriculum and were removed. Note: Wood Physics & Lab ↔ Timber Building Materials & Environment Practice are equivalent (Y2-1 required).'},
+ courseNoteB:{ko:'2026 교과과정에 개설된 전체 교과목입니다. 이전 교과과정으로 이수한 과목의 인정 여부는 「관련 규정 요약 → 필수 교과목」과 학과 사무실에서 확인하세요.',
+        en:'All courses offered in the 2026 curriculum. For recognition of courses taken under earlier curricula, see "Key Regulations → Required courses" or contact the department office.'},
  regTitle:{ko:'관련 규정 요약', en:'Key Regulations'},
  regSubG:{ko:'전남대학교 대학원 교학규정의 핵심 조항입니다. 원문은 대학원 홈페이지 규정집을 확인하세요.',
         en:'Key articles of the CNU Graduate School Academic Regulations. See the Graduate School website for full text.'},
@@ -681,16 +701,31 @@ const SCH_B={
   {n:{ko:'조비·경농장학재단장학금',en:'Jobi·Kyungnong Foundation Scholarship'}, a:{ko:'등록금 반액',en:'Half tuition'}, w:{ko:'1월',en:'Jan'}, tag:'merit'},
   {n:{ko:'동원장학금',en:'Dongwon Scholarship'}, a:{ko:'1인당 300만원',en:'₩3,000,000/person'}, w:{ko:'-',en:'-'}, tag:'merit'}],
  out:[
-  {n:{ko:'국가장학금',en:'National Scholarship'}, a:{ko:'등록금 전액/감면',en:'Full/partial tuition'}, w:{ko:'2월·8월',en:'Feb · Aug'}, tag:'info'},
-  {n:{ko:'국가근로장학금',en:'National Work-Study'}, a:{ko:'매월 30만원',en:'₩300,000/month'}, w:{ko:'-',en:'-'}, tag:'info'},
-  {n:{ko:'국가우수이공계장학금',en:'National STEM Excellence Scholarship'}, a:{ko:'2년간 등록금 전액',en:'Full tuition for 2 years'}, w:{ko:'4월',en:'Apr'}, tag:'info'},
-  {n:{ko:'지역인재장학금',en:'Regional Talent Scholarship'}, a:{ko:'등록금 전액',en:'Full tuition'}, w:{ko:'-',en:'-'}, tag:'info'},
-  {n:{ko:'대통령과학장학금',en:'Presidential Science Scholarship'}, a:{ko:'학기당 250만원',en:'₩2,500,000/semester'}, w:{ko:'-',en:'-'}, tag:'info'},
-  {n:{ko:'푸른등대장학금',en:'Blue Lighthouse Scholarship'}, a:{ko:'생활비 지원',en:'Living expenses'}, w:{ko:'12월',en:'Dec'}, tag:'info'},
-  {n:{ko:'희망사다리장학금',en:'Hope Ladder Scholarship'}, a:{ko:'등록금 전액+생활비 200만원',en:'Full tuition + ₩2,000,000'}, w:{ko:'3월',en:'Mar'}, tag:'info'},
+  {n:{ko:'국가장학금',en:'National Scholarship'}, a:{ko:'등록금 전액/감면',en:'Full/partial tuition'}, w:{ko:'2월·8월',en:'Feb · Aug'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'국가근로장학금',en:'National Work-Study'}, a:{ko:'매월 30만원',en:'₩300,000/month'}, w:{ko:'-',en:'-'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'국가우수이공계장학금',en:'National STEM Excellence Scholarship'}, a:{ko:'2년간 등록금 전액',en:'Full tuition for 2 years'}, w:{ko:'4월',en:'Apr'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'지역인재장학금',en:'Regional Talent Scholarship'}, a:{ko:'등록금 전액',en:'Full tuition'}, w:{ko:'-',en:'-'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'대통령과학장학금',en:'Presidential Science Scholarship'}, a:{ko:'학기당 250만원',en:'₩2,500,000/semester'}, w:{ko:'-',en:'-'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'푸른등대장학금',en:'Blue Lighthouse Scholarship'}, a:{ko:'생활비 지원',en:'Living expenses'}, w:{ko:'12월',en:'Dec'}, tag:'info', u:'https://www.kosaf.go.kr'},
+  {n:{ko:'희망사다리장학금',en:'Hope Ladder Scholarship'}, a:{ko:'등록금 전액+생활비 200만원',en:'Full tuition + ₩2,000,000'}, w:{ko:'3월',en:'Mar'}, tag:'info', u:'https://www.kosaf.go.kr'},
   {n:{ko:'농어촌희망재단장학금',en:'Rural Hope Foundation Scholarship'}, a:{ko:'등록금 전액',en:'Full tuition'}, w:{ko:'6월',en:'Jun'}, tag:'info'},
   {n:{ko:'산림청장학금',en:'Korea Forest Service Scholarship'}, a:{ko:'학업장려금',en:'Study grant'}, w:{ko:'-',en:'-'}, tag:'info'},
   {n:{ko:'지자체·장학재단 장학금 140여 개',en:'~140 local government & foundation scholarships'}, a:{ko:'-',en:'-'}, w:{ko:'-',en:'-'}, tag:'info'}]
+};
+/* 카드 툴팁용 출처·사이트 */
+const SRC={
+ bIn:{s:{ko:'출처 : 임산공학과 학사관리 지침서(2026.1.) 「3. 장학사정」',en:'Source: Dept. Undergraduate Guide (Jan 2026), §3 Scholarships'},
+      u:'https://www.jnu.ac.kr/MainUniLife/UniInfor/Promotion/InternalScholarship',
+      ul:{ko:'전남대 교내장학금 안내 (학생과)',en:'CNU internal scholarships (Student Affairs)'}},
+ bFund:{s:{ko:'출처 : 임산공학과 학사관리 지침서(2026.1.) 「3. 장학사정」',en:'Source: Dept. Undergraduate Guide (Jan 2026), §3 Scholarships'},
+      u:'https://www.jnu.ac.kr/MainUniLife/UniInfor/Promotion/Scholarship',
+      ul:{ko:'전남대 장학 안내 · 세부사항 학과 사무실(062-530-2090)',en:'CNU scholarship guide · details: dept. office (062-530-2090)'}},
+ bOut:{s:{ko:'출처 : 임산공학과 학사관리 지침서(2026.1.) 「3. 장학사정」',en:'Source: Dept. Undergraduate Guide (Jan 2026), §3 Scholarships'},
+      u:'https://www.jnu.ac.kr/MainUniLife/UniInfor/Promotion/ExternalScholarship',
+      ul:{ko:'전남대 교외장학금 안내 / 한국장학재단 kosaf.go.kr',en:'CNU external scholarships / KOSAF kosaf.go.kr'}},
+ grad:{s:{ko:'출처 : 전남대학교 대학원 「대학원 지원 프로그램」 안내',en:'Source: CNU Graduate School Support Programs guide'},
+      u:'https://webgs.jnu.ac.kr',
+      ul:{ko:'일반대학원 홈페이지 (문의 062-530-내선)',en:'Graduate School website (062-530-ext.)'}}
 };
 /* 대학원 (대학원 지원 프로그램) — el(state): 신청 대상 여부 판단 */
 const SCH_G={
@@ -1244,11 +1279,16 @@ function stepHtml(s,i,cls,isNow,body){
     <div class="body">${body}</div>${dates}</li>`;}
 
 /* ================= 장학금 ================= */
-function schCard(o,elig,info){
+function schCard(o,elig,info,src){
   const cls=info?'info':(elig?'elig':'dim');
   const pill=info?L(S.pillInfo):(elig?L(S.pillOk):L(S.pillNo));
-  return `<div class="sch ${cls}"><div class="n">${L(o.n)} <span class="pill">${pill}</span></div>
-  <div class="amt">${L(o.a)}</div><div class="meta">${L(o.w)}${o.c?' · '+L(o.c):''}</div></div>`;}
+  const url=o.u||(src?src.u:null);
+  const tip=src?`<span class="tip">${L(src.s)}${url?'<br><b>'+url.replace(/^https?:\/\//,'')+'</b> ↗ '+(o.u?'':L(src.ul)):''}</span>`:'';
+  const inner=`${tip}<div class="n">${L(o.n)} <span class="pill">${pill}</span></div>
+  <div class="amt">${L(o.a)}</div><div class="meta">${L(o.w)}${o.c?' · '+L(o.c):''}</div>`;
+  return url
+    ? `<a class="sch ${cls}" href="${url}" target="_blank" rel="noopener">${inner}</a>`
+    : `<div class="sch ${cls}" tabindex="0">${inner}</div>`;}
 
 function renderSch(){
   $('tSchSub').textContent = prog==='B'?L(S.schSubB):(prog==='L'?L(S.schSubL):L(S.schSubG));
@@ -1268,8 +1308,9 @@ function renderSch(){
       {n:{ko:'근로장학 RA·TA·GA',en:'RA·TA·GA Assistantships'}, a:{ko:'석사 30~40만원/월',en:'₩300–400K/month (MS)'}, w:{ko:'3월·9월 · ☎5902',en:'Mar·Sep · ext.5902'},
        c:{ko:'대학원 재학생 (추천)',en:'Enrolled graduate students'}, ok:true}];
     box.innerHTML=
-      grp(S.grpLink, linkSch.map(o=>schCard(o,o.ok,false)))+
-      grp(S.grpNext, nextSch.map(o=>schCard(o,false,true)));
+      grp(S.grpLink, linkSch.map(o=>schCard(o,o.ok,false,SRC.grad)))+
+      grp(S.grpNext, nextSch.map(o=>schCard(o,false,true,SRC.grad)));
+    attachSchToggles();
     return;
   }
   if(prog==='B'){
@@ -1289,27 +1330,35 @@ function renderSch(){
       `<div class="tot"><span style="font-size:13px;font-weight:700;color:var(--sub)">${L(S.scoreTitle)}</span><b>${total}</b><span style="color:var(--sub)">/ 100</span></div>
        <div class="seg2">${segs.map(([c,v])=>`<i style="width:${v}%;background:${c}"></i>`).join('')}</div>
        <div class="lg">${segs.map(([c,v,n])=>`<span><i style="background:${c}"></i>${n} : ${Math.round(v*10)/10}</span>`).join('')}</div>
-       ${gateOK?'':'<div class="gatewarn">'+L(S.scoreGate)+'</div>'}`;
+       ${gateOK?'':'<div class="gatewarn">'+L(S.scoreGate)+'</div>'}
+       <div style="margin-top:8px;font-size:12px;color:var(--sub);line-height:1.55">${L(S.scoreNote)}</div>`;
     box.innerHTML=
       grp(S.grpIn, SCH_B.in.map(o=>{
         const elig = o.tag==='fresh'?fresh : (o.tag==='merit'?gateOK : o.tag==='grad'?gateOK : true);
         const info = o.tag==='special' || o.tag==='living';
-        return schCard(o, elig, info);}))+
-      grp(S.grpFund, SCH_B.fund.map(o=>schCard(o, gateOK, false)))+
-      grp(S.grpOut, SCH_B.out.map(o=>schCard(o, false, true)));
+        return schCard(o, elig, info, SRC.bIn);}), S.rankNote)+
+      grp(S.grpFund, SCH_B.fund.map(o=>schCard(o, gateOK, false, SRC.bFund)), S.rankNote)+
+      grp(S.grpOut, SCH_B.out.map(o=>schCard(o, false, true, SRC.bOut)));
   }else{
     const s={status:$('gStatus').value, cnu:$('gCnu').checked, bk:$('gBk').checked};
     box.innerHTML=
-      grp(S.grpAdm, SCH_G.adm.map(o=>schCard(o, o.el(s), false)))+
-      grp(S.grpEnr, SCH_G.enr.map(o=>schCard(o, o.el(s), false)))+
-      grp(S.grpBk, SCH_G.bk.map(o=>schCard(o, o.el(s), false)))+
-      grp(S.grpAward, SCH_G.award.map(o=>schCard(o, o.el(s), false)))+
-      grp(S.grpSup, SCH_G.sup.map(o=>schCard(o, o.el(s), false)));
+      grp(S.grpAdm, SCH_G.adm.map(o=>schCard(o, o.el(s), false, SRC.grad)))+
+      grp(S.grpEnr, SCH_G.enr.map(o=>schCard(o, o.el(s), false, SRC.grad)))+
+      grp(S.grpBk, SCH_G.bk.map(o=>schCard(o, o.el(s), false, SRC.grad)))+
+      grp(S.grpAward, SCH_G.award.map(o=>schCard(o, o.el(s), false, SRC.grad)))+
+      grp(S.grpSup, SCH_G.sup.map(o=>schCard(o, o.el(s), false, SRC.grad)));
   }
+  attachSchToggles();
 }
-function grp(title,cards){
-  return `<div class="schgroup"><h3>${L(title)} <span class="cnt">${cards.length}</span></h3>
-  <div class="schcards">${cards.join('')}</div></div>`;}
+const schOpen={};   /* 그룹별 접힘 상태 (세션 내 유지) */
+function grp(title,cards,note){
+  const k=title.ko;
+  const open=schOpen[k]!==false;
+  return `<details class="schgroup" data-k="${k}" ${open?'open':''}><summary>${L(title)} <span class="cnt">${cards.length}</span>${note?'<span class="cnt" style="background:var(--amber-soft);color:var(--amber)">'+L(note)+'</span>':''}</summary>
+  <div class="schcards">${cards.join('')}</div></details>`;}
+function attachSchToggles(){
+  document.querySelectorAll('#schGroups details.schgroup').forEach(d=>{
+    d.addEventListener('toggle',()=>{schOpen[d.dataset.k]=d.open;});});}
 
 function renderRegs(){
   const isU = prog==='B'||prog==='L';
